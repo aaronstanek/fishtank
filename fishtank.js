@@ -159,6 +159,10 @@ function fish_loop(info) {
                 let fish = Object.keys(FISH)[0];
                 rm_fish(fish);
             }
+            info.interval /= 0.95;
+            clearInterval(info.id);
+            info.id = setInterval(fish_loop,info.interval,info);
+            console.log("fps reduced to",1000/info.interval);
         }
         info.last = new Date().getTime();
     }

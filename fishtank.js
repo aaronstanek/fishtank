@@ -173,31 +173,49 @@ function load_background() {
     b.src = "back_huge.jpg";
 }
 
-function set_backgorund_size() {
+function set_background_size() {
     var b = document.getElementById("b");
-    if (b.width < screen.width + 20) {
-        b.width = screen.width + 20;
+    var xf = window.innerWidth / b.naturalWidth;
+    var yf = window.innerHeight / b.naturalHeight;
+    if (xf > yf) {
+        b.style.width = window.innerWidth + "px";
+        b.style.height = "auto";
+        b.style.left = "0px";
+        b.style.top = ((window.innerHeight - (xf * b.naturalHeight)) / 2.0) + "px";
     }
-    if (b.height < screen.height + 20) {
-        screen.height + 20;
+    else {
+        b.style.height = window.innerHeight + "px";
+        b.style.width = "auto";
+        b.style.top = "0px";
+        b.style.left = ((window.innerWidth - (yf * b.naturalWidth)) / 2.0) + "px";
     }
 }
 
 function draw_foreground() {
     var w = document.getElementById("w");
-    var x = screen.width + 20;
-    var y = screen.height + 20;
+    var x = window.innerWidth + 20;
+    var y = window.innerHeight + 20;
     var s = "<svg width=\""+x+"\" height=\""+y+"\">";
     s += "<rect width=\""+x+"\" height=\""+y+"\" style=\"fill:rgb(0,0,255)\"/>"
     s += "</svg>";
     w.innerHTML = s;
 }
 
+function res() {
+    set_background_size();
+    draw_foreground();
+}
+
+function ares(c) {
+    res();
+    if (c < 100) {setTimeout(ares,100,c+1);}
+}
+
 function launch() {
     BODY = document.getElementsByTagName("body")[0];
     FISH = {};
-    load_background();
-    set_backgorund_size();
     draw_foreground();
+    load_background();
     setInterval(fish_loop,1000/60);
+    ares(0);
 }

@@ -3,10 +3,14 @@
 <head>
     <meta charset="utf-8">
     <script src="fishtank.js"></script>
-    <style>.back{-webkit-transform: scaleX(-1);transform: scaleX(-1);}</style>
+    <style>
+    .back{-webkit-transform: scaleX(-1);transform: scaleX(-1);}
+    body{margin:0px;border-width:0px;padding:0px;}
+    img{margin:0px;border-width:0px;padding:0px;z-index:-1;position:fixed;}
+    </style>
 </head>
-<body style="overflow:hidden;z-index:0">
-    <img id="b" style="z-index:-1;position:fixed;top:-10px;left:-10px"></img>
+<body style="overflow:hidden;z-index:0" onresize="res()">
+    <img id="b" />
     <span id="w" style="z-index:1;position:fixed;top:-10px;left:-10px;opacity:0.15"></span>
     <script>launch();</script>
 </body>

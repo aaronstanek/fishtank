@@ -170,8 +170,8 @@ function fish_loop(info) {
                     info.max_fish *= 0.95;
                 }
                 info.max_fish = Math.floor(info.max_fish);
-                if (info.max_fish < 1) {
-                    info.max_fish = 1;
+                if (info.max_fish < 4) {
+                    info.max_fish = 4;
                 }
                 else {
                     console.log("max fish reduced to",info.max_fish);

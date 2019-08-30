@@ -153,18 +153,6 @@ function fish_loop(info) {
         info.penalty += (diff - info.interval);
         if (info.penalty >= 10 * info.interval) {
             info.penalty = 0;
-            if (info.max_fish == -1) {
-                info.max_fish = (Object.keys(FISH)).length * 0.95;
-            }
-            else {
-                info.max_fish *= 0.95;
-            }
-            info.max_fish = Math.floor(info.max_fish);
-            console.log("max fish reduced to",info.max_fish);
-            while ((Object.keys(FISH)).length > info.max_fish) {
-                let fish = Object.keys(FISH)[0];
-                rm_fish(fish);
-            }
             if (info.interval < 40) {
                 info.interval /= 0.95;
                 if (info.interval > 40) {
@@ -173,6 +161,25 @@ function fish_loop(info) {
                 clearInterval(info.id);
                 info.id = setInterval(fish_loop,info.interval,info);
                 console.log("fps reduced to",1000/info.interval);
+            }
+            else {
+                if (info.max_fish == -1) {
+                    info.max_fish = (Object.keys(FISH)).length * 0.95;
+                }
+                else {
+                    info.max_fish *= 0.95;
+                }
+                info.max_fish = Math.floor(info.max_fish);
+                if (info.max_fish < 1) {
+                    info.max_fish = 1;
+                }
+                else {
+                    console.log("max fish reduced to",info.max_fish);
+                }
+                while ((Object.keys(FISH)).length > info.max_fish) {
+                    let fish = Object.keys(FISH)[0];
+                    rm_fish(fish);
+                }
             }
         }
         info.last = new Date().getTime();

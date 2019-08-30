@@ -153,9 +153,15 @@ function fish_loop(info) {
         info.penalty += (diff - info.interval);
         if (info.penalty >= 10 * info.interval) {
             info.penalty = 0;
-            info.ok_density *= 0.95;
-            console.log("fish density reduced to",info.ok_density);
-            while (get_fish_density() > info.ok_density) {
+            if (info.max_fish == -1) {
+                info.max_fish = (Object.keys(FISH)).length * 0.95;
+            }
+            else {
+                info.max_fish *= 0.95;
+            }
+            info.max_fish = Math.floor(info.max_fish);
+            console.log("max fish reduced to",info.max_fish);
+            while ((Object.keys(FISH)).length > info.max_fish) {
                 let fish = Object.keys(FISH)[0];
                 rm_fish(fish);
             }
@@ -175,8 +181,15 @@ function fish_loop(info) {
         info.penalty = 0;
     }
     catch_fish();
-    while (get_fish_density() < info.ok_density) {
-        make_fish();
+    if (info.max_fish == -1) {
+        while (get_fish_density() < 0.2) {
+            make_fish(info.max_fish);
+        }
+    }
+    else {
+        while ((get_fish_density() < 0.2) && ((Object.keys(FISH)).length < info.max_fish)) {
+            make_fish(info.max_fish);
+        } 
     }
     move_fish(factor);
     if (Math.random() < 0.01 * (Object.keys(FISH).length/36)) {
@@ -269,7 +282,7 @@ function launch() {
     load_background();
     var info = {};
     info.last = new Date().getTime();
-    info.ok_density = 0.2;
+    info.max_fish = -1;
     info.interval = 16.6666667;
     info.penalty = 0;
     info.id = setInterval(fish_loop,info.interval,info);

@@ -104,11 +104,11 @@ function make_fish() {
     }
 }
 
-function move_fish() {
+function move_fish(factor) {
     for (n in FISH) {
         var f = FISH[n];
-        f.x += f.vx;
-        f.y += f.vy;
+        f.x += f.vx * factor;
+        f.y += f.vy * factor;
         f.s.style.left = f.x + "px";
         f.s.style.top = f.y + "px";
     }
@@ -144,12 +144,24 @@ function mayhem() {
     }
 }
 
-function fish_loop() {
+function fish_loop(info) {
+    var now = new Date().getTime();
+    var diff = now - info.last;
+    info.last = now;
+    var factor = diff / 16.6666667;
+    if (diff > info.interval * 1.2) {
+        info.penalty++;
+        if (info.penalty >= 10) {
+            clearInterval(info.id);
+            info.interval *= 2.0;
+            info.id = setInterval(fish_loop,info.interval,info);
+        }
+    }
     catch_fish();
-    while (get_fish_density() < 0.2) {
+    while (get_fish_density() < info.ok_density) {
         make_fish();
     }
-    move_fish();
+    move_fish(factor);
     if (Math.random() < 0.01 * (Object.keys(FISH).length/36)) {
         mayhem();
     }
@@ -216,6 +228,11 @@ function launch() {
     FISH = {};
     draw_foreground();
     load_background();
-    setInterval(fish_loop,1000/60);
+    var info = {};
+    info.last = new Date().getTime();
+    info.ok_density = 0.2;
+    info.interval = 16.6666667;
+    info.penalty = 0;
+    info.id = setInterval(fish_loop,info.interval,info);
     ares(0);
 }

@@ -149,13 +149,21 @@ function fish_loop(info) {
     var diff = now - info.last;
     info.last = now;
     var factor = diff / 16.6666667;
-    if (diff > info.interval * 1.2) {
-        info.penalty++;
-        if (info.penalty >= 10) {
-            clearInterval(info.id);
-            info.interval *= 2.0;
-            info.id = setInterval(fish_loop,info.interval,info);
+    if (diff > info.interval * 1.1) {
+        info.penalty += (diff - info.interval);
+        if (info.penalty >= 10 * info.interval) {
+            info.penalty = 0;
+            info.ok_density *= 0.95;
+            console.log("fish density reduced to",info.ok_density);
+            while (get_fish_density() > info.ok_density) {
+                let fish = Object.keys(FISH)[0];
+                rm_fish(fish);
+            }
         }
+        info.last = new Date().getTime();
+    }
+    else {
+        info.penalty = 0;
     }
     catch_fish();
     while (get_fish_density() < info.ok_density) {

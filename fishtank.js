@@ -159,10 +159,15 @@ function fish_loop(info) {
                 let fish = Object.keys(FISH)[0];
                 rm_fish(fish);
             }
-            info.interval /= 0.95;
-            clearInterval(info.id);
-            info.id = setInterval(fish_loop,info.interval,info);
-            console.log("fps reduced to",1000/info.interval);
+            if (info.interval < 40) {
+                info.interval /= 0.95;
+                if (info.interval > 40) {
+                    info.interval = 40;
+                }
+                clearInterval(info.id);
+                info.id = setInterval(fish_loop,info.interval,info);
+                console.log("fps reduced to",1000/info.interval);
+            }
         }
         info.last = new Date().getTime();
     }
@@ -230,9 +235,31 @@ function res() {
     draw_foreground();
 }
 
-function ares(c) {
+function ares() {
     res();
-    if (c < 100) {setTimeout(ares,100,c+1);}
+    var good = 0;
+    var t;
+    var b = document.getElementById("b");
+    if ((b.style.width != "auto") && (b.style.width != "")) {
+        t = b.style.width;
+        t = t.slice(0,t.length-2);
+        t = Number.parseFloat(t);
+        if (t >= window.innerWidth) {
+            good += 1;
+        }
+    }
+    if ((b.style.height != "auto") && (b.style.height != "")) {
+        t = b.style.height;
+        t = t.slice(0,t.length-2);
+        t = Number.parseFloat(t);
+        if (t >= window.innerHeight) {
+            good += 1;
+        }
+    }
+    if (good == 2) {
+        return;
+    }
+    setTimeout(ares,50);
 }
 
 function launch() {
@@ -246,5 +273,5 @@ function launch() {
     info.interval = 16.6666667;
     info.penalty = 0;
     info.id = setInterval(fish_loop,info.interval,info);
-    ares(0);
+    ares();
 }
